@@ -3,6 +3,7 @@ package com.example.myweatherapp.Screens
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -40,6 +42,7 @@ import androidx.navigation.NavController
 import com.example.myweatherapp.Composables.DailyForecastScroll
 import com.example.myweatherapp.Composables.InfoTextBold
 import com.example.myweatherapp.Composables.InfoTextLight
+import com.example.myweatherapp.Composables.MyLoadingView
 import com.example.myweatherapp.R
 import com.example.myweatherapp.States.ApiUiState
 import com.example.myweatherapp.States.DailyCardInfoUiState
@@ -63,7 +66,7 @@ fun MainScreen(navController: NavController){
             state =state, onMoreDetailsClicked ={ navController.navigate("DetailsScreen")},
             onRefresh = viewModel::getDailyWeatherData,
             apiState =apiState, networkState = networkState,
-            oldValue = old, assignNewValue = viewModel::assignNewValue)
+            onAddClicked = { navController.navigate("LocationScreen") })
 
 
     }
@@ -77,62 +80,58 @@ fun MainScreenContent(
     onMoreDetailsClicked:()->Unit, onRefresh:()->Unit,
     apiState:State<ApiUiState>,
     networkState:State<CheckConnectivity.Status>,
-    oldValue:State<CheckConnectivity.Status>,
-    assignNewValue:(CheckConnectivity.Status)->Unit
+    onAddClicked:()->Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     MyWeatherAppTheme {
-        val snackbarHostState = remember { SnackbarHostState() }
-        Scaffold(modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .fillMaxSize(),
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-             LaunchedEffect(networkState.value) {
-                 Log.d("mmm","old : ${oldValue.value} new : ${networkState.value}")
-                 if (oldValue.value!=networkState.value) {
-                     snackbarHostState.showSnackbar("${networkState.value}")
-
-
-                 }
-                 assignNewValue(networkState.value)
-                 }
-            },
-            topBar = {
-                CenterAlignedTopAppBar(
-                    colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.background,
-                        titleContentColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    title = {
-                        Text(
-                            text = state.value?.currentWeatherData?.dayName!!,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                    },
-
-                    scrollBehavior = scrollBehavior
-                )
+        if (apiState.value.isLoading){
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+                MyLoadingView()
             }
-        ) { innerPadding ->
-            var isRefreshing by remember { mutableStateOf(false) }
-            PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = onRefresh
-            ) {
-                ConstraintLayout(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .nestedScroll(scrollBehavior.nestedScrollConnection)
+        }
+        else if (apiState.value.isSuccessful||
+            networkState.value==CheckConnectivity.Status.Unavailable||
+            networkState.value==CheckConnectivity.Status.Lost) {
+            Scaffold(modifier = Modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .fillMaxSize(),
+                topBar = {
+                    CenterAlignedTopAppBar(
+                        colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ),
+                        title = {
+                            Text(
+                                modifier = Modifier.padding(8.dp),
+                                text = state.value?.currentWeatherData?.dayName!!,
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
+
+                        scrollBehavior = scrollBehavior,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            ) { innerPadding ->
+                var isRefreshing by remember { mutableStateOf(false) }
+                PullToRefreshBox(
+                    isRefreshing = isRefreshing,
+                    onRefresh = onRefresh
                 ) {
-                    val (image, weatherConditionText,
-                        cityName, monthText, dayText,
-                        dateText, countryText,
-                        timeText, divider,
-                        maxTempText, loadingView,
-                        maxTemp, minTemp,
-                        scroll, verticalDivider, moreDetailsBtn) = createRefs()
+                    ConstraintLayout(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                            .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    ) {
+                        val (image, weatherConditionText,
+                            cityName, monthText, dayText,
+                            dateText, countryText,
+                            timeText, divider,
+                            maxTempText, manageCitiesBtn,
+                            maxTemp, minTemp,
+                            scroll, verticalDivider, moreDetailsBtn) = createRefs()
 
                         Image(painter =
                         painterResource(loadImageBasedOnWeatherCondition(state.value?.currentWeatherData?.weatherCondition!!)),
@@ -164,7 +163,25 @@ fun MainScreenContent(
                             })
 
 
-                        InfoTextBold(state.value?.currentWeatherData!!.monthName!!, fontSize = 25.sp,
+                        Button(
+                            onClick = onAddClicked,
+                            modifier = Modifier.constrainAs(manageCitiesBtn) {
+                                top.linkTo(countryText.bottom,5.dp)
+                                start.linkTo(weatherConditionText.end,4.dp)
+                                end.linkTo(parent.end)
+                            }) {
+                            Text(
+                                "Locations",
+                                color = MaterialTheme.colorScheme.background,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontSize = 20.sp
+                            )
+                        }
+
+
+
+                        InfoTextBold(state.value?.currentWeatherData!!.monthName!!,
+                            fontSize = 25.sp,
                             modifier = Modifier.constrainAs(monthText) {
                                 top.linkTo(image.top, 50.dp)
                                 start.linkTo(parent.start)
@@ -172,7 +189,8 @@ fun MainScreenContent(
                             })
 
 
-                        InfoTextBold(state.value?.currentWeatherData!!.dayNumber!!, fontSize = 50.sp,
+                        InfoTextBold(state.value?.currentWeatherData!!.dayNumber!!,
+                            fontSize = 50.sp,
                             modifier = Modifier.constrainAs(dayText) {
                                 top.linkTo(monthText.top, 25.dp)
                                 start.linkTo(parent.start)
@@ -226,7 +244,8 @@ fun MainScreenContent(
                             })
 
 
-                        InfoTextBold("${state.value?.currentWeatherData!!.Temp}°C", fontSize = 60.sp,
+                        InfoTextBold("${state.value?.currentWeatherData!!.Temp}°C",
+                            fontSize = 60.sp,
                             modifier = Modifier.constrainAs(maxTemp) {
                                 top.linkTo(maxTempText.bottom)
                                 start.linkTo(maxTempText.start)
@@ -253,13 +272,14 @@ fun MainScreenContent(
                                 top.linkTo(moreDetailsBtn.bottom, 10.dp)
                             })
 
-                   // }
+                        // }
+                    }
                 }
+
+
             }
 
-
         }
-
     }
 
 }

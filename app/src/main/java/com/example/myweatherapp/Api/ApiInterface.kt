@@ -12,20 +12,20 @@ interface ApiInterface {
     suspend fun getRealTimeWeather(
         @Query("lat") lat:Double=28.4173,
         @Query("lon") lon:Double=30.7818,
-    @Query("key") apikey:String ="04003d1c827142778a1ebf1680cf89e9"
+    @Query("key") apikey:String ="a1ba4430cc2647bb88e2390a62f4ead6"
     ):Response<WeatherDataClass>
 
     @GET(".")
     suspend fun getDailyData(
         @Query("lat") lat:Double=28.4173,
         @Query("lon") lon:Double=30.7818,
-        @Query("key") apikey:String ="04003d1c827142778a1ebf1680cf89e9"
+        @Query("key") apikey:String ="a1ba4430cc2647bb88e2390a62f4ead6"
     ):Response<DailyWeatherModel>
 
     @GET(".")
     suspend fun getHourlyData(
         @Query("lat") lat:Double=28.4173,
         @Query("lon") lon:Double=30.7818,
-        @Query("key") apikey:String ="04003d1c827142778a1ebf1680cf89e9"
+        @Query("key") apikey:String ="a1ba4430cc2647bb88e2390a62f4ead6"
     ):Response<HourluForecastModel>
 }

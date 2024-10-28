@@ -22,6 +22,8 @@ materialVersion="3"
 location="21.3.0"
 permissions="0.36.0"
 
+splach-screen="1.0.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -64,6 +66,7 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 
 location-services = { group = "com.google.android.gms", name = "play-services-location",version.ref="location" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions",version.ref="permissions" }
+splach-screen = { group = "androidx.core", name = "core-splashscreen",version.ref="splach-screen" }
 
 
 

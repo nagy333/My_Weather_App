@@ -41,7 +41,7 @@ class WeatherRepo(private val currentDao:CurrentWeatherDAO,context:Context) {
 
    init {
 
-      storeCurrentWeatherInDatabase(currentDao)
+      storeCurrentWeatherInDatabase(currentDao,0)
 
       storeDailyWeatherInDatabase(currentDao)
 
@@ -51,11 +51,13 @@ class WeatherRepo(private val currentDao:CurrentWeatherDAO,context:Context) {
 
 
    @OptIn(DelicateCoroutinesApi::class)
-   fun storeCurrentWeatherInDatabase(currentDao: CurrentWeatherDAO) {
+   fun storeCurrentWeatherInDatabase(currentDao: CurrentWeatherDAO,code:Int) {
       GlobalScope.launch {
          try {
+            apiState.update { it.copy(isLoading = true) }
             val lat=GetCurrentLocation.getLatAndLon.value[0].toDouble()
             val lon=GetCurrentLocation.getLatAndLon.value[1].toDouble()
+            Log.d("location",lat.toString())
 
             val response = currentWeatherApiService.getRealTimeWeather(lat = lat, lon = lon)
 
@@ -68,6 +70,7 @@ class WeatherRepo(private val currentDao:CurrentWeatherDAO,context:Context) {
                currentDao.insertCurrentWeatherData(currentWeatherData)
 
                currentDao.insertWeatherDetails(weatherDetails)
+               apiState.update { it.copy(isLoading = false, isSuccessful = true) }
 
 
             } else {
@@ -87,7 +90,6 @@ class WeatherRepo(private val currentDao:CurrentWeatherDAO,context:Context) {
    fun storeDailyWeatherInDatabase(dao: CurrentWeatherDAO) {
       GlobalScope.launch {
          try {
-            apiState.update { it.copy(isLoading = true) }
 
             val response = dailyWeatherApi.getDailyData()
 
@@ -97,14 +99,12 @@ class WeatherRepo(private val currentDao:CurrentWeatherDAO,context:Context) {
 
                dao.insertDailyWeatherData(dataList)
 
-               apiState.update { it.copy(isLoading = false, isSuccessful = true) }
-
-               Log.d("nagy", dataList.size.toString())
+               Log.d("daily", dataList.size.toString())
             } else {
-               Log.d("nagy", response.errorBody().toString())
+               Log.d("daily", response.errorBody().toString())
             }
          } catch (e: Exception) {
-            Log.d("nagy", e.message.toString())
+            Log.d("daily", e.message.toString())
 
          }
 

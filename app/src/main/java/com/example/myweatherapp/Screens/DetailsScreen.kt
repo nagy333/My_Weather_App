@@ -56,15 +56,16 @@ fun DetailsScreenContent(
         Scaffold(
             topBar = {
                 CenterAlignedTopAppBar(title = {
-                    InfoTextBold("Weather Details", Modifier) },
+                    InfoTextBold("Weather Details", Modifier.padding(8.dp)) },
                     colors = TopAppBarDefaults
                         .centerAlignedTopAppBarColors(containerColor
                         = MaterialTheme.colorScheme.background),
                     navigationIcon = {
                         IconButton(onClick = onBackClicked) {
-                            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "", tint =MaterialTheme.colorScheme.primary )
                         }
-                    },)
+                    }, modifier = Modifier.padding(top = 8.dp))
             }
         ) {innerPadding->
             ConstraintLayout(

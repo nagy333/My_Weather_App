@@ -85,5 +85,7 @@ dependencies {
     implementation(libs.location.services)
     implementation(libs.accompanist.permissions)
 
+    implementation(libs.splach.screen)
+
 
 }
