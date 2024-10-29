@@ -9,10 +9,17 @@ import retrofit2.http.Query
 
 interface ApiInterface {
     @GET(".")
-    suspend fun getRealTimeWeather(
+    suspend fun getRealTimeWeatherByCoordinates(
         @Query("lat") lat:Double=28.4173,
         @Query("lon") lon:Double=30.7818,
     @Query("key") apikey:String ="a1ba4430cc2647bb88e2390a62f4ead6"
+    ):Response<WeatherDataClass>
+
+
+    @GET(".")
+    suspend fun getRealTimeWeatherByCityName(
+        @Query("city") cityName:String="minia",
+        @Query("key") apikey:String ="a1ba4430cc2647bb88e2390a62f4ead6"
     ):Response<WeatherDataClass>
 
     @GET(".")

@@ -7,6 +7,7 @@ import com.example.myweatherapp.Api.CurrentWeatherApi.currentWeatherApiService
 import com.example.myweatherapp.Api.DailyWeatherApi.dailyWeatherApi
 import com.example.myweatherapp.Api.HourlyForecastApi.hourlyApi
 import com.example.myweatherapp.DB.CurrentWeatherDAO
+import com.example.myweatherapp.DB.WeatherDataEntity
 import com.example.myweatherapp.Parsing.parseCurrentDataFromApiToDb
 import com.example.myweatherapp.Parsing.parseDailyWeatherFromApiToDB
 import com.example.myweatherapp.Parsing.parseDetailsDataFromApiToDB
@@ -37,11 +38,16 @@ class WeatherRepo(private val currentDao:CurrentWeatherDAO,context:Context) {
 
    suspend fun getWeatherDetails() = currentDao.getWeatherDetails()
 
+   private var count=1
+
+
    val networkState= CheckConnectivity.checkNetworkStatus(context)
+   val currentList:ArrayList<WeatherDataEntity> = ArrayList()
 
    init {
 
-      storeCurrentWeatherInDatabase(currentDao,0)
+
+      storeCurrentWeatherInDatabase(currentDao,0,"",context)
 
       storeDailyWeatherInDatabase(currentDao)
 
@@ -51,23 +57,31 @@ class WeatherRepo(private val currentDao:CurrentWeatherDAO,context:Context) {
 
 
    @OptIn(DelicateCoroutinesApi::class)
-   fun storeCurrentWeatherInDatabase(currentDao: CurrentWeatherDAO,code:Int) {
+   fun storeCurrentWeatherInDatabase(currentDao: CurrentWeatherDAO,code:Int=count,cityName:String,context: Context) {
+
       GlobalScope.launch {
          try {
             apiState.update { it.copy(isLoading = true) }
-            val lat=GetCurrentLocation.getLatAndLon.value[0].toDouble()
-            val lon=GetCurrentLocation.getLatAndLon.value[1].toDouble()
-            Log.d("location",lat.toString())
+            val lat=GetCurrentLocation.getLocation(context).get(0).toDouble()
+            val lon=GetCurrentLocation.getLocation(context).get(1).toDouble()
+            Log.d("Mary",GetCurrentLocation.getLocation(context = context).toString())
+//           currentDao.getCount().collect{
+//               count=it
+//            }
 
-            val response = currentWeatherApiService.getRealTimeWeather(lat = lat, lon = lon)
+            val response = if (code==0)
+               currentWeatherApiService.getRealTimeWeatherByCoordinates(lat = lat, lon = lon)
+            else currentWeatherApiService.getRealTimeWeatherByCityName(cityName = cityName)
 
             if (response.isSuccessful) {
 
-               val currentWeatherData = parseCurrentDataFromApiToDb(response)
+               val currentWeatherData = parseCurrentDataFromApiToDb(response,code)
+               currentList.add(code,currentWeatherData)
 
                val weatherDetails = parseDetailsDataFromApiToDB(response)
 
-               currentDao.insertCurrentWeatherData(currentWeatherData)
+               currentDao.insertCurrentWeatherData(currentList)
+               Log.d("list",currentList.size.toString())
 
                currentDao.insertWeatherDetails(weatherDetails)
                apiState.update { it.copy(isLoading = false, isSuccessful = true) }

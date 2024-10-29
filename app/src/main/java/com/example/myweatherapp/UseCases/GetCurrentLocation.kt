@@ -2,11 +2,15 @@ package com.example.myweatherapp.UseCases
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Location
+import android.location.LocationManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import com.example.myweatherapp.Composables.MyNavigation
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -16,38 +20,24 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
 object GetCurrentLocation {
-    val getLatAndLon= MutableStateFlow(listOf("28.4173","30.7818"))
+    val getLatAndLon= MutableStateFlow(listOf("28.0871","30.7618"))
+
     @SuppressLint("MissingPermission")
-    @OptIn(ExperimentalPermissionsApi::class)
-    @Composable
-    fun GetLocation(context: Context) {
-        val fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(context)
-        val locationState = rememberPermissionState(android.Manifest.permission.ACCESS_FINE_LOCATION)
-        val lat_lon=ArrayList<String>()
-        val requestPermissionLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.RequestPermission()) {
-                isGranted->
-            if(isGranted){
-                val location=fusedLocationProviderClient.lastLocation
-                location.addOnSuccessListener {
-                    if (it!=null){
-                        Log.d("hany",it.latitude.toString())
-                        Log.d("hany",it.longitude.toString())
-                        lat_lon.add(0,it.latitude.toString())
-                        lat_lon.add(1,it.longitude.toString())
-                        getLatAndLon.update { lat_lon }
-                    }
-                }
-
-            }
-            else Log.d("hany","isDenied")
-
+    fun getLocation(context: Context):List<String>{
+        val locManager=context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val  network_enabled = locManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        var location: Location?=null
+        if (network_enabled){
+            location = locManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)!!
         }
-        LaunchedEffect(locationState) {
-            if (!locationState.status.isGranted ) {
-                requestPermissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
-            }
+        if (location!=null){
+            Log.d("LOC",location.longitude.toString())
+            Log.d("LOC",location.latitude.toString())
+            return listOf(location.latitude.toString(),
+                location.longitude.toString())
         }
-        Log.d("hany",lat_lon.size.toString())
+        else{
+            return listOf("28.0871","30.7618")
+        }
     }
 }

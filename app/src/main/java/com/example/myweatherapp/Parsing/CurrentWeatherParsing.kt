@@ -21,7 +21,7 @@ fun parseCurrentDataFromDBtoUiState(data:WeatherDataEntity):CurrentWeatherUiStat
         Temp = data.temp,
         )
 }
-fun parseCurrentDataFromApiToDb(response:Response<WeatherDataClass>):WeatherDataEntity{
+fun parseCurrentDataFromApiToDb(response:Response<WeatherDataClass>,id:Int):WeatherDataEntity{
     return WeatherDataEntity(
         cityName = response.body()!!.data!![0]!!.cityName!!,
         skyCondition = response.body()!!.data!![0]!!.weather!!.description!!,
@@ -33,7 +33,7 @@ fun parseCurrentDataFromApiToDb(response:Response<WeatherDataClass>):WeatherData
         temp =response.body()!!.data!![0]!!.temp!!.toInt().toString(),
         time = TimeUseCases.getCurrentTime(),
         dayName = TimeUseCases.getDayName(response.body()!!.data!![0]!!.datetime!!),
-        id = 1
+        id = id
     )
 }
 

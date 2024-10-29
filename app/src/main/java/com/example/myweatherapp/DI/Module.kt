@@ -23,4 +23,8 @@ object Module {
     fun provideWeatherDao(@ApplicationContext context:Context):CurrentWeatherDAO{
         return CurrentWeatherDatabase.getInstance(context).dao()
     }
+    @Provides
+    fun porvideContext(@ApplicationContext context: Context):Context{
+        return context
+    }
 }
