@@ -45,10 +45,11 @@ class DetailsScreenViewModel@Inject constructor(
 
     fun getWeatherDetails() {
         viewModelScope.launch {
-           val details= repo.getWeatherDetails()
+           repo.getWeatherDetails().collect{data->
+               val detailsCardData= parseDetailsDataFromDbToUiState(data[0])
+               _state.update{it.copy(detailsCardInfo = detailsCardData)}
+           }
 
-            val detailsCardData= parseDetailsDataFromDbToUiState(details)
-            _state.update{it.copy(detailsCardInfo = detailsCardData)}
         }
     }
 }

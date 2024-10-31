@@ -80,7 +80,7 @@ object TimeUseCases {
             18 -> "06${time.substring(2, 5)}"
             19 -> "07${time.substring(2, 5)}"
             else -> {
-                "6:00"
+                "06:00"
             }
         }
 
@@ -94,7 +94,7 @@ object TimeUseCases {
             7 -> "07${time.substring(2, 5)}"
             8 -> "08${time.substring(2, 5)}"
             else -> {
-                "6:00"
+                "06:00"
             }
         }
 

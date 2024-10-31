@@ -9,21 +9,23 @@ import retrofit2.Response
 
 fun parseHourlyDataFromDBToUiState(list:List<HourlyForecastEntity>):ArrayList<HourlyCardUIState>{
     val newList:ArrayList<HourlyCardUIState> = ArrayList()
-    list.forEach {
-       val item= HourlyCardUIState(time = it.time, temp = it.temp)
-        newList.add(item)
+    for (i in 0..23) {
+            val item = HourlyCardUIState(time = list[i].time, temp = list[i].temp)
+            newList.add(item)
     }
     return newList
 }
 
-fun parseHourlyDataFromApiToDB(response: Response<HourluForecastModel>):List<HourlyForecastEntity>{
+fun parseHourlyDataFromApiToDB(response: Response<HourluForecastModel>,count:Int):List<HourlyForecastEntity>{
     val hourlyList:ArrayList<HourlyForecastEntity> = ArrayList()
+    var c = count
     for (i:Int in 0..23){
         val item=HourlyForecastEntity(
-            id=i,
+            id=c,
             time = TimeUseCases.getHourlyTime(response.body()!!.data!![i].datetime!!.substring(11,13)),
             temp = response.body()!!.data!![i].temp!!.toInt().toString()
         )
+        c++
         hourlyList.add(item)
 
     }

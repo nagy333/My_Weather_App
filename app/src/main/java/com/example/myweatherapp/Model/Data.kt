@@ -49,7 +49,7 @@ data class Data(
     @SerializedName("snow")
     val snow: Int? = null,
     @SerializedName("solar_rad")
-    val solarRad: Int? = null,
+    val solarRad: Double? = null,
     @SerializedName("sources")
     val sources: List<String?>? = null,
     @SerializedName("state_code")

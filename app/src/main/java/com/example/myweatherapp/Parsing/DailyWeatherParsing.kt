@@ -18,16 +18,18 @@ fun parseDailyWeatherFromEntityToUiState(data:List<DailyWeatherEntity>): ArrayLi
     }
     return list
 }
-fun parseDailyWeatherFromApiToDB(response: Response<DailyWeatherModel>):List<DailyWeatherEntity>{
+fun parseDailyWeatherFromApiToDB(response: Response<DailyWeatherModel>,count:Int):List<DailyWeatherEntity>{
     val dataList:ArrayList<DailyWeatherEntity> = ArrayList()
+    var c=count
     for (i:Int in 0..5){
         val weatherData=DailyWeatherEntity(
-            id=i,
+            id=c,
             day = TimeUseCases.getDayName(response.body()!!.data?.get(i)!!.datetime!!),
             weatherCondition = response.body()!!.data?.get(i)!!.weather!!.description!!,
             maxTemp = response.body()!!.data?.get(i)!!.maxTemp!!.toInt().toString(),
             minTemp = response.body()!!.data?.get(i)!!.minTemp!!.toInt().toString(),
         )
+        c++
         dataList.add(weatherData)
     }
     return dataList

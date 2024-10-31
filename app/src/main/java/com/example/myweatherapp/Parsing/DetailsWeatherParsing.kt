@@ -18,7 +18,7 @@ fun parseDetailsDataFromDbToUiState(details:DetailsEntity):DetailsCardUiState{
     )
 }
 
-fun parseDetailsDataFromApiToDB(response: Response<WeatherDataClass>):DetailsEntity{
+fun parseDetailsDataFromApiToDB(response: Response<WeatherDataClass>,id:Int):DetailsEntity{
     return DetailsEntity(
         feelsLike =response.body()!!.data!![0]!!.appTemp!!.toInt().toString(),
         //feelsLike = "35",
@@ -32,7 +32,7 @@ fun parseDetailsDataFromApiToDB(response: Response<WeatherDataClass>):DetailsEnt
         //sunrise = "6:45",
         sunset = TimeUseCases.getSunsetTime(response.body()!!.data!![0]!!.sunset!!),
         //sunset = "7:00",
-        id = 0,
+        id = id,
 
         )
 }

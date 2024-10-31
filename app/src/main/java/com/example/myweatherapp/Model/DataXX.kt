@@ -31,7 +31,7 @@ data class DataXX(
     @SerializedName("pop")
     val pop: Int? = 0,
     @SerializedName("precip")
-    val precip: Int? = 0,
+    val precip: Double? = null,
     @SerializedName("pres")
     val pres: Int? = 0,
     @SerializedName("rh")

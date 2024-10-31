@@ -24,15 +24,19 @@ interface ApiInterface {
 
     @GET(".")
     suspend fun getDailyData(
-        @Query("lat") lat:Double=28.4173,
-        @Query("lon") lon:Double=30.7818,
+        @Query("lat") lat:Double?=28.4173,
+        @Query("lon") lon:Double?=30.7818,
+        @Query("city") cityName: String?="minia",
+        @Query("days") daysNumber: Int?=6,
         @Query("key") apikey:String ="a1ba4430cc2647bb88e2390a62f4ead6"
     ):Response<DailyWeatherModel>
 
     @GET(".")
     suspend fun getHourlyData(
-        @Query("lat") lat:Double=28.4173,
-        @Query("lon") lon:Double=30.7818,
+        @Query("lat") lat:Double?=28.4173,
+        @Query("lon") lon:Double?=30.7818,
+        @Query("city") cityName: String?="minia",
+        @Query("hours") hours:Int?= 24,
         @Query("key") apikey:String ="a1ba4430cc2647bb88e2390a62f4ead6"
     ):Response<HourluForecastModel>
 }

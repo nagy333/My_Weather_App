@@ -43,7 +43,7 @@ data class DataX(
     @SerializedName("pop")
     val pop: Int? = 0,
     @SerializedName("precip")
-    val precip: Int? = 0,
+    val precip: Double? = null,
     @SerializedName("pres")
     val pres: Int? = 0,
     @SerializedName("rh")
@@ -67,7 +67,7 @@ data class DataX(
     @SerializedName("valid_date")
     val validDate: String? = "",
     @SerializedName("vis")
-    val vis: Int? = 0,
+    val vis: Double? = null,
     @SerializedName("weather")
     val weather: WeatherX? = WeatherX(),
     @SerializedName("wind_cdir")

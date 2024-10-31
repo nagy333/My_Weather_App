@@ -60,8 +60,13 @@ val _newtworkState=repo.networkState
         viewModelScope.launch {
             repo.getCurrentWeatherData().collect{data->
                 Log.d("list",data.size.toString())
-                val currentWeather= parseCurrentDataFromDBtoUiState(data[0])
-                _state.update { it.copy(currentWeatherData = currentWeather) }
+                try {
+                    val currentWeather= parseCurrentDataFromDBtoUiState(data[0])
+                    _state.update { it.copy(currentWeatherData = currentWeather) }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                }
+
             }
             }
     }

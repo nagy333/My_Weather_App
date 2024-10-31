@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             //GetCurrentLocation.GetLocation(this)
             isFirstRunUseCase.initSharedPrefs(this)
-
             MyWeatherAppTheme {
                 MyNavigation()
 

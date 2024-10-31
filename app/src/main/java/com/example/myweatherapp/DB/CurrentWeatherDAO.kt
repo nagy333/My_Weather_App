@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface CurrentWeatherDAO {
 
 @Insert(onConflict = OnConflictStrategy.REPLACE)
-   suspend fun insertCurrentWeatherData(currentDataList:List<WeatherDataEntity>)
+   suspend fun insertCurrentWeatherData(currentDataList:WeatherDataEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
    suspend fun insertWeatherDetails(details:DetailsEntity)
@@ -25,7 +25,7 @@ interface CurrentWeatherDAO {
 
 
     @Query("select * from WeatherDetails")
-    suspend fun getWeatherDetails():DetailsEntity
+     fun getWeatherDetails():Flow<List<DetailsEntity>>
 
 
 
@@ -34,7 +34,15 @@ interface CurrentWeatherDAO {
      fun getCurrentWeatherData():Flow<List<WeatherDataEntity>>
 
      @Query("Select COUNT(id) from currentweatherdata")
-     fun getCount():Flow<Int>
+     suspend fun getCurrentCount():Int
+
+
+    @Query("Select COUNT(id) from dailyweather")
+    suspend fun getDailyCount():Int
+
+
+    @Query("Select COUNT(id) from HourlyForecast")
+    suspend fun getHourlyCount():Int
 
 
 

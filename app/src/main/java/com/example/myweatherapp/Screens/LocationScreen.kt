@@ -1,28 +1,21 @@
 package com.example.myweatherapp.Screens
 
-import android.content.ClipData.Item
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -38,10 +31,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.loader.content.Loader
-import androidx.navigation.NavController
 import com.example.myweatherapp.Composables.InfoTextBold
 import com.example.myweatherapp.Composables.MyBottomSheet
+import com.example.myweatherapp.Composables.MyLocationCard
+import com.example.myweatherapp.States.LocationScreenUiState
 import com.example.myweatherapp.ViewModels.LocationScreenViewModel
 import com.example.myweatherapp.ui.theme.MyWeatherAppTheme
 
@@ -61,7 +54,7 @@ fun LocationScreen(){
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocationScreenContent(
-    state: State<String>,
+    state: State<LocationScreenUiState>,
     onValueChange:(String)->Unit,
     onSearchClicked:()->Unit
 ) {
@@ -98,10 +91,20 @@ fun LocationScreenContent(
                if (showBottomSheet){
                    ModalBottomSheet(onDismissRequest = { showBottomSheet = false },
                        sheetState=sheetState) {
-                       MyBottomSheet(state.value,
+                       MyBottomSheet(state.value.searchText,
                            onValueChange = onValueChange,
                            onSearchClicked)
                    }
+               }
+               LazyColumn(modifier = Modifier.fillMaxSize()
+                   .padding(8.dp)) {
+                   items(state.value.locationList){
+                       MyLocationCard(
+                           city = it.cityName,
+                           pTemp = it.temp,
+                           pWeatherCondition = it.weatherCondition)
+                   }
+
                }
            }
         }
