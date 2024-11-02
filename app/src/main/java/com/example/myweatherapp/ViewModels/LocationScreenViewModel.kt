@@ -59,4 +59,7 @@ class LocationScreenViewModel @SuppressLint("StaticFieldLeak")
             _state.update { it.copy(locationList = list) }
         }  }
     }
+    fun onLocationCardClicked(){
+
+    }
 }

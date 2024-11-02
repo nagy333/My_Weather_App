@@ -31,24 +31,30 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.myweatherapp.Composables.InfoTextBold
 import com.example.myweatherapp.Composables.MyBottomSheet
 import com.example.myweatherapp.Composables.MyLocationCard
 import com.example.myweatherapp.States.LocationScreenUiState
 import com.example.myweatherapp.ViewModels.LocationScreenViewModel
+import com.example.myweatherapp.ViewModels.MainScreenViewModel
 import com.example.myweatherapp.ui.theme.MyWeatherAppTheme
 
 @Composable
-fun LocationScreen(){
+fun LocationScreen(navController: NavController){
 
     val viewModel:LocationScreenViewModel = hiltViewModel()
+    val mainViewModel:MainScreenViewModel= hiltViewModel()
 
     val pState=viewModel.state.collectAsState()
     MyWeatherAppTheme {
         LocationScreenContent(
             state = pState,
            viewModel::updateValue,
-            viewModel::onSearchClicked)
+            viewModel::onSearchClicked,
+            onLocationCardClicked = { index->
+                navController.navigate("PagerScreen") },
+            mainViewModel::updateIndex)
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +62,9 @@ fun LocationScreen(){
 fun LocationScreenContent(
     state: State<LocationScreenUiState>,
     onValueChange:(String)->Unit,
-    onSearchClicked:()->Unit
+    onSearchClicked:()->Unit,
+    onLocationCardClicked:(Int)->Unit,
+    onLocationCardClickedV:(Int)->Unit
 ) {
     MyWeatherAppTheme {
         val sheetState= rememberModalBottomSheetState()
@@ -98,11 +106,14 @@ fun LocationScreenContent(
                }
                LazyColumn(modifier = Modifier.fillMaxSize()
                    .padding(8.dp)) {
-                   items(state.value.locationList){
+                   items(state.value.locationList.size){index:Int->
                        MyLocationCard(
-                           city = it.cityName,
-                           pTemp = it.temp,
-                           pWeatherCondition = it.weatherCondition)
+                           city = state.value.locationList[index].cityName,
+                           pTemp =state.value.locationList[index].temp,
+                           pWeatherCondition = state.value.locationList[index].weatherCondition,
+                           index=index,
+                           onLocationCardClicked,
+                           onLocationCardClickedV)
                    }
 
                }
@@ -116,6 +127,7 @@ fun LocationScreenContent(
 @Preview(showSystemUi = true)
 @Composable
 fun ppp(){
-    MyWeatherAppTheme {   LocationScreen() }
+    MyWeatherAppTheme {   //LocationScreen()
+     }
 
 }

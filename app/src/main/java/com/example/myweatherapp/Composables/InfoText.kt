@@ -20,6 +20,20 @@ fun InfoTextBold(
         modifier = modifier,
         fontSize =fontSize )
 }
+
+@Composable
+fun InfoTextLight(
+    text:String
+    , modifier: Modifier,
+    style: TextStyle = MaterialTheme.typography.labelSmall,
+    fontSize: TextUnit = MaterialTheme.typography.labelSmall.fontSize){
+    Text(text=text,
+        style = style,
+        color = MaterialTheme.colorScheme.secondary,
+        modifier = modifier,
+        fontSize =fontSize )
+}
+
 @Preview(showSystemUi = true)
 @Composable
 fun PP(){

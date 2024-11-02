@@ -1,6 +1,7 @@
 package com.example.myweatherapp.Composables
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -26,10 +27,12 @@ import com.example.myweatherapp.ui.theme.MyWeatherAppTheme
 
 @Composable
 fun HourlyForecastCard(data:HourlyCardUIState,sunrise:String,sunset:String){
-    MyWeatherAppTheme {  Card(modifier = Modifier
+    MyWeatherAppTheme {
+        Card(modifier = Modifier
         .padding(8.dp)
         .width(100.dp)
-        .height(150.dp),
+        .height(175.dp) ,
+            border = BorderStroke(4.dp,MaterialTheme.colorScheme.background),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
        ) {
         Column(modifier = Modifier.fillMaxSize().padding(8.dp)

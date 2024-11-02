@@ -4,6 +4,7 @@ import com.example.myweatherapp.R
 
 data class MainScreenUiState(
     val currentWeatherData : CurrentWeatherUiState? = CurrentWeatherUiState(),
+
     val dailyCardInfo : List<DailyCardInfoUiState>? = listOf(
         DailyCardInfoUiState(),
         DailyCardInfoUiState(),
@@ -11,7 +12,10 @@ data class MainScreenUiState(
         DailyCardInfoUiState(),
         DailyCardInfoUiState(),
         DailyCardInfoUiState()
-    )
+    ),
+    val hourlyWeather : List<HourlyCardUIState> = listOf(HourlyCardUIState()),
+
+    val detailsCardInfo : DetailsCardUiState? = DetailsCardUiState()
 )
 
 data class CurrentWeatherUiState(
