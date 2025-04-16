@@ -1,0 +1,1 @@
+My Weather App is a dynamic and user-friendly application designed to provide accurate and real- time weather updates. This app leverages modern technology to deliver comprehensive weather forecasts, empowering users to plan their day effectively. With a sleek design and intuitive interface, the app caters to users of all demographics, offering a seamless experience. 
